@@ -1,70 +1,74 @@
 #include<stdio.h>
 #include<conio.h>
 
-
-void Adjust(int Heap_of_Numbers[],int i)
+void swap(int* a, int* b)
 {
-    int j,copy,number;
-    int reference = 1;
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
 
-    number = Heap_of_Numbers[0];
-    while(2*i <= number && reference == 1)
+void heapify(int array[], int n,int i)
+{
+    int max = i;
+    int leftChild = 2 * i + 1;
+    int rightChild = 2 * i + 2;
+
+    if(leftChild < n && array[leftChild] > array[max]){
+        max = leftChild;
+    }
+
+    if(rightChild < n && array[rightChild] > array[max])
     {
-        j = 2 * i;
-        if(j + 1 <= number && Heap_of_Numbers[j+1] > Heap_of_Numbers[j]){
-            j = j + 1;
-            if(Heap_of_Numbers[j] < Heap_of_Numbers[i]){
-                reference = 0;
-            }
-            else{
-                copy = Heap_of_Numbers[i];
-                Heap_of_Numbers[i] = Heap_of_Numbers[j];
-                Heap_of_Numbers[j] = copy;
-                i = j;
-            }
-        }
+        max = rightChild;
+    }
+
+    if(max != i){
+        swap(&array[i],&array[max]);
+        heapify(array, n , max);
     }
 }
 
-void Make_Heap(int heap[])
+void HeapSort(int array[], int n)
 {
-    int i;
-    int Number_of_Elements;
-
-    Number_of_Elements = heap[0];
-    for(i=Number_of_Elements / 2; i>=1; i--){
-        Adjust(heap,i);
+    for(int i=n/2-1; i>=0; i--){
+        heapify(array,n,i);
     }
+
+    for(int i=n-1; i>=0; i--){
+        swap(&array[0],&array[i]);
+
+        heapify(array,i,0);
+    }
+
 }
 
-int main(void)
+void display(int array[],int n)
 {
-    int heap[30];
+    for(int i=0; i<n; i++)
+        printf("%d ",array[i]);
+    printf("\n");
+}
+
+int main()
+{
+    int array[20];
     int size;
-    int i,lastElement,copyVariable;
 
-    printf("Enter number of elements present in the Unsorted Array: ");
+    printf("Enter the Size of Sort: ");
     scanf("%d",&size);
 
-    printf("Enter the Member of array one by one: ");
-    for(i=1; i<size; i++){
-        scanf("%d",&heap[i]);
+    printf("Enter the element for the sort: ");
+    for(int i=0; i<size; i++){
+        scanf("%d",&array[i]);
     }
+    //int array[] = {11,34,9,5,16,10};
+    //int n = sizeof(array) / sizeof(array[0]);
 
-    heap[0] = size;
-    Make_Heap(heap);
+    printf("Original array: ");
+    display(array,size);
+    HeapSort(array,size);
 
-    while(heap[0] > 1)
-    {
-        lastElement = heap[0];
-        copyVariable = heap[1];
-        heap[1] = heap[lastElement];
-        heap[lastElement] = copyVariable;
-        heap[0]--;
-        Adjust(heap,1);
-    }
-    printf("Sorted Array: ");
-    for(i=0; i<size; i++){
-        printf("%d",&heap[i]);
-    }
+    printf("Sorted array: ");
+    display(array,size);
 }
